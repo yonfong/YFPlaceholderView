@@ -1,0 +1,6 @@
+framework module Pods_YFPlaceholderView_Tests {
+  umbrella header "Pods-YFPlaceholderView_Tests-umbrella.h"
+
+  export *
+  module * { export * }
+}

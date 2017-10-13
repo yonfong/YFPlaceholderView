@@ -1,0 +1,6 @@
+framework module YFPlaceholderView {
+  umbrella header "YFPlaceholderView-umbrella.h"
+
+  export *
+  module * { export * }
+}
