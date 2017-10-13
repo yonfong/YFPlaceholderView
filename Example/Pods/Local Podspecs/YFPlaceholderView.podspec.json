@@ -1,8 +1,8 @@
 {
   "name": "YFPlaceholderView",
   "version": "0.1.0",
-  "summary": "A short description of YFPlaceholderView.",
-  "description": "TODO: Add long description of the pod here.",
+  "summary": "an easy way to add placeholderview",
+  "description": "an easy way to add placeholderview to kind of UIView, you can custom place holder and show rect",
   "homepage": "https://github.com/bluesky0109/YFPlaceholderView",
   "license": {
     "type": "MIT",
