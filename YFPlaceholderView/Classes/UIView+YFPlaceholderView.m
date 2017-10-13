@@ -16,6 +16,8 @@
 
 @property (nonatomic, assign) BOOL yf_originalScrollEnabled;
 
+@property (nonatomic, copy) void(^yf_containerTapHandle)(void);
+
 @end
 
 @implementation UIView (YFPlaceholderView)
@@ -26,6 +28,28 @@
 
 
 - (void)yf_showPlaceholderViewInRect:(CGRect)showRect type:(YFPlaceholderType)type tapHandle:(void(^)(void))tapHandle {
+    
+    NSString *title = @"";
+    if (type == YFPlaceholderTypeLoading) {
+        title = @"努力加载中";
+    } else if (type == YFPlaceholderTypeFail) {
+        title = @"加载失败";
+    }
+    
+    YFPlaceholderView *placeHolderView = [YFPlaceholderView placeholderViewWithType:type title:title];
+    return [self yf_showCustomPlaceholderView:placeHolderView inRect:showRect tapHandle:tapHandle];
+}
+
+- (void)yf_showCustomPlaceholderView:(__kindof UIView *)customPlaceholder tapHandle:(void (^)(void))tapHandle {
+    return [self yf_showCustomPlaceholderView:customPlaceholder inRect:self.bounds tapHandle:tapHandle];
+}
+
+- (void)yf_showCustomPlaceholderView:(__kindof UIView *)customPlaceholder inRect:(CGRect)showRect tapHandle:(void (^)(void))tapHandle {
+    
+    if (customPlaceholder == nil) {
+        return;
+    }
+    
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.00 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         // 如果是UIScrollView及其子类，占位图展示期间禁止scroll
         if ([self isKindOfClass:[UIScrollView class]]) {
@@ -45,27 +69,25 @@
         [self addSubview:self.yf_placeholderContainer];
         self.yf_placeholderContainer.backgroundColor = [UIColor whiteColor];
         
-        NSString *title = @"";
-        if (type == YFPlaceholderTypeLoading) {
-            title = @"努力加载中";
-        } else if (type == YFPlaceholderTypeFail) {
-            title = @"加载失败";
+        if (tapHandle) {
+            UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(yf_placeholderContainerTaped)];
+            [self.yf_placeholderContainer addGestureRecognizer:tapGesture];
+            self.yf_containerTapHandle = tapHandle;
+        } else {
+            self.yf_containerTapHandle = nil;
         }
         
-        YFPlaceholderView *placeHolderView = [YFPlaceholderView placeholderViewWithType:type title:title];
-        placeHolderView.translatesAutoresizingMaskIntoConstraints = NO;
-        [self.yf_placeholderContainer addSubview:placeHolderView];
+        customPlaceholder.translatesAutoresizingMaskIntoConstraints = NO;
+        [self.yf_placeholderContainer addSubview:customPlaceholder];
         
-        NSLayoutConstraint *centerXConstraint = [NSLayoutConstraint constraintWithItem:placeHolderView attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self.yf_placeholderContainer attribute:NSLayoutAttributeCenterX multiplier:1 constant:0];
+        NSLayoutConstraint *centerXConstraint = [NSLayoutConstraint constraintWithItem:customPlaceholder attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self.yf_placeholderContainer attribute:NSLayoutAttributeCenterX multiplier:1 constant:0];
         
-        NSLayoutConstraint *centerYConstraint = [NSLayoutConstraint constraintWithItem:placeHolderView attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self.yf_placeholderContainer attribute:NSLayoutAttributeCenterY multiplier:1 constant:0];
+        NSLayoutConstraint *centerYConstraint = [NSLayoutConstraint constraintWithItem:customPlaceholder attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self.yf_placeholderContainer attribute:NSLayoutAttributeCenterY multiplier:1 constant:0];
         
         [self.yf_placeholderContainer addConstraint:centerXConstraint];
         [self.yf_placeholderContainer addConstraint:centerYConstraint];
-        
     });
 }
-
 
 - (void)yf_removePlaceholderView {
     if (self.yf_placeholderContainer) {
@@ -77,6 +99,20 @@
         UIScrollView *scrollView = (UIScrollView *)self;
         scrollView.scrollEnabled = self.yf_originalScrollEnabled;
     }
+}
+
+- (void)yf_placeholderContainerTaped {
+    if (self.yf_containerTapHandle) {
+        self.yf_containerTapHandle();
+    }
+}
+
+- (void(^)(void))yf_containerTapHandle {
+    return objc_getAssociatedObject(self, _cmd);
+}
+
+- (void)setYf_containerTapHandle:(void(^)(void))yf_containerTapHandle {
+    objc_setAssociatedObject(self, @selector(yf_containerTapHandle), yf_containerTapHandle, OBJC_ASSOCIATION_COPY_NONATOMIC);
 }
 
 - (UIView *)yf_placeholderContainer {

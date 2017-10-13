@@ -20,7 +20,15 @@
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
     
-    [self.view yf_showPlaceholderViewWithType:YFPlaceholderTypeLoading tapHandle:nil];
+    __weak __typeof(self) weakSelf = self;
+    
+    [self.view yf_showPlaceholderViewWithType:YFPlaceholderTypeLoading tapHandle:^{
+        [weakSelf.view yf_showPlaceholderViewWithType:YFPlaceholderTypeSuccess tapHandle:^{
+            [weakSelf.view yf_showPlaceholderViewWithType:YFPlaceholderTypeFail tapHandle:^{
+                [weakSelf.view yf_removePlaceholderView];
+            }];
+        }];
+    }];
     
 }
 

@@ -12,7 +12,6 @@
 
 @interface UIView (YFPlaceholderView)
 
-
 /**
  在当前UIView上显示占位图，会覆盖整个View
 
@@ -20,7 +19,6 @@
  @param tapHandle 点击背景回调
  */
 - (void)yf_showPlaceholderViewWithType:(YFPlaceholderType)type tapHandle:(void(^)(void))tapHandle;
-
 
 /**
  在当前UIView指定区域内显示占位图
@@ -31,6 +29,22 @@
  */
 - (void)yf_showPlaceholderViewInRect:(CGRect)showRect type:(YFPlaceholderType)type tapHandle:(void(^)(void))tapHandle;
 
+/**
+ 在当前UIView上显示自定义的占位图
+
+ @param customPlaceholder 自定义的占位图
+ @param tapHandle 点击背景回调
+ */
+- (void)yf_showCustomPlaceholderView:(__kindof UIView *)customPlaceholder tapHandle:(void (^)(void))tapHandle;
+
+/**
+ 在当前UIView指定区域内显示自定义占位图
+
+ @param customPlaceholder 自定义的占位图
+ @param showRect 占位图要显示的区域
+ @param tapHandle 点击背景回调
+ */
+- (void)yf_showCustomPlaceholderView:(__kindof UIView *)customPlaceholder inRect:(CGRect)showRect tapHandle:(void (^)(void))tapHandle;
 
 /**
  移除当前UIView上的占位图
