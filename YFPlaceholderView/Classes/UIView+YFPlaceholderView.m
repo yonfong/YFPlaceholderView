@@ -23,19 +23,19 @@
 @implementation UIView (YFPlaceholderView)
 
 - (void)yf_showPlaceholderViewWithType:(YFPlaceholderType)type tapHandle:(void(^)(void))tapHandle {
-    [self yf_showPlaceholderViewInRect:self.bounds type:type tapHandle:tapHandle];
+    [self yf_showPlaceholderViewWithType:type title:nil tapHandle:tapHandle];
 }
 
+- (void)yf_showPlaceholderViewWithType:(YFPlaceholderType)type title:(NSString *)title tapHandle:(void (^)(void))tapHandle {
+    YFPlaceholderView *placeHolderView = [YFPlaceholderView placeholderViewWithType:type title:title];
+    return [self yf_showCustomPlaceholderView:placeHolderView inRect:self.bounds tapHandle:tapHandle];
+}
 
 - (void)yf_showPlaceholderViewInRect:(CGRect)showRect type:(YFPlaceholderType)type tapHandle:(void(^)(void))tapHandle {
-    
-    NSString *title = @"";
-    if (type == YFPlaceholderTypeLoading) {
-        title = @"努力加载中";
-    } else if (type == YFPlaceholderTypeFail) {
-        title = @"加载失败";
-    }
-    
+    return [self yf_showPlaceholderViewInRect:showRect type:type title:nil tapHandle:tapHandle];
+}
+
+- (void)yf_showPlaceholderViewInRect:(CGRect)showRect type:(YFPlaceholderType)type title:(NSString *)title tapHandle:(void (^)(void))tapHandle {
     YFPlaceholderView *placeHolderView = [YFPlaceholderView placeholderViewWithType:type title:title];
     return [self yf_showCustomPlaceholderView:placeHolderView inRect:showRect tapHandle:tapHandle];
 }
