@@ -18,5 +18,10 @@
   "platforms": {
     "ios": "8.0"
   },
-  "source_files": "YFPlaceholderView/Classes/**/*"
+  "source_files": "YFPlaceholderView/Classes/**/*",
+  "resource_bundles": {
+    "YFPlaceholderView": [
+      "YFPlaceholderView/Assets/*.png"
+    ]
+  }
 }

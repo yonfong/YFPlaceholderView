@@ -7,6 +7,7 @@
 //
 
 #import "SKYViewController.h"
+#import <YFPlaceholderView/UIView+YFPlaceholderView.h>
 
 @interface SKYViewController ()
 
@@ -18,6 +19,9 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
+    
+    [self.view yf_showPlaceholderViewWithType:YFPlaceholderTypeLoading tapHandle:nil];
+    
 }
 
 - (void)didReceiveMemoryWarning

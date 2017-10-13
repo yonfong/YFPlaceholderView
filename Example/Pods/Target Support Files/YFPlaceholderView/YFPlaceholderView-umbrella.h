@@ -10,6 +10,10 @@
 #endif
 #endif
 
+#import "NSBundle+YFPlaceholder.h"
+#import "UIImage+YFPlaceholder.h"
+#import "UIView+YFPlaceholderView.h"
+#import "YFPlaceholderView.h"
 
 FOUNDATION_EXPORT double YFPlaceholderViewVersionNumber;
 FOUNDATION_EXPORT const unsigned char YFPlaceholderViewVersionString[];
