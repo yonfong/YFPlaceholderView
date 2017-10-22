@@ -10,13 +10,55 @@
 
 @import ObjectiveC.runtime;
 
-@interface UIView()
 
-@property (nonatomic, strong) UIView *yf_placeholderContainer;
+@interface YFPlaceholderContainer: UIView
 
-@property (nonatomic, assign) BOOL yf_originalScrollEnabled;
+@property (nonatomic, strong) UITapGestureRecognizer *tapGesture;
 
 @property (nonatomic, copy) void(^yf_containerTapHandle)(void);
+
+@end
+
+@implementation YFPlaceholderContainer
+
+- (instancetype)initWithFrame:(CGRect)frame {
+    if (self = [super initWithFrame:frame]) {
+        self.backgroundColor = [UIColor whiteColor];
+    }
+    return self;
+}
+
+- (void)setYf_containerTapHandle:(void (^)(void))yf_containerTapHandle
+{
+    _yf_containerTapHandle = yf_containerTapHandle;
+    if (yf_containerTapHandle) {
+        self.tapGesture.enabled = YES;
+    } else {
+        self.tapGesture.enabled = NO;
+    }
+}
+
+- (void)yf_placeholderContainerTaped {
+    if (self.yf_containerTapHandle) {
+        self.yf_containerTapHandle();
+    }
+}
+
+- (UITapGestureRecognizer *)tapGesture {
+    if (!_tapGesture) {
+        _tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(yf_placeholderContainerTaped)];
+        [self addGestureRecognizer:_tapGesture];
+    }
+    return _tapGesture;
+}
+
+@end
+
+
+@interface UIView()
+
+@property (nonatomic, weak) YFPlaceholderContainer *yf_placeholderContainer;
+@property (nonatomic, assign) BOOL yf_originalScrollEnabled;
 
 @end
 
@@ -60,22 +102,15 @@
             scrollView.scrollEnabled = NO;
         }
         
-        //------- 占位图 -------//
+        //------- 占位图 容器 -------//
         if (self.yf_placeholderContainer) {
             [self.yf_placeholderContainer removeFromSuperview];
             self.yf_placeholderContainer = nil;
         }
-        self.yf_placeholderContainer = [[UIView alloc] initWithFrame:showRect];
-        [self addSubview:self.yf_placeholderContainer];
-        self.yf_placeholderContainer.backgroundColor = [UIColor whiteColor];
-        
-        if (tapHandle) {
-            UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(yf_placeholderContainerTaped)];
-            [self.yf_placeholderContainer addGestureRecognizer:tapGesture];
-            self.yf_containerTapHandle = tapHandle;
-        } else {
-            self.yf_containerTapHandle = nil;
-        }
+        YFPlaceholderContainer *placeholderContainer = [[YFPlaceholderContainer alloc] initWithFrame:showRect];
+        [self addSubview:placeholderContainer];
+        self.yf_placeholderContainer = placeholderContainer;
+        self.yf_placeholderContainer.yf_containerTapHandle = tapHandle;
         
         customPlaceholder.translatesAutoresizingMaskIntoConstraints = NO;
         [self.yf_placeholderContainer addSubview:customPlaceholder];
@@ -101,26 +136,12 @@
     }
 }
 
-- (void)yf_placeholderContainerTaped {
-    if (self.yf_containerTapHandle) {
-        self.yf_containerTapHandle();
-    }
-}
-
-- (void(^)(void))yf_containerTapHandle {
+- (YFPlaceholderContainer *)yf_placeholderContainer {
     return objc_getAssociatedObject(self, _cmd);
 }
 
-- (void)setYf_containerTapHandle:(void(^)(void))yf_containerTapHandle {
-    objc_setAssociatedObject(self, @selector(yf_containerTapHandle), yf_containerTapHandle, OBJC_ASSOCIATION_COPY_NONATOMIC);
-}
-
-- (UIView *)yf_placeholderContainer {
-    return objc_getAssociatedObject(self, _cmd);
-}
-
-- (void)setYf_placeholderContainer:(UIView *)yf_placeholderContainer {
-    objc_setAssociatedObject(self, @selector(yf_placeholderContainer), yf_placeholderContainer, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+- (void)setYf_placeholderContainer:(YFPlaceholderContainer *)yf_placeholderContainer {
+    objc_setAssociatedObject(self, @selector(yf_placeholderContainer), yf_placeholderContainer, OBJC_ASSOCIATION_ASSIGN);
 }
 
 - (BOOL)yf_originalScrollEnabled {
