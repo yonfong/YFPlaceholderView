@@ -10,6 +10,14 @@
 
 @import ObjectiveC.runtime;
 
+// 主线程执行
+NS_INLINE void dispatch_main_async(dispatch_block_t block) {
+    if ([NSThread isMainThread]) {
+        block();
+    } else {
+        dispatch_async(dispatch_get_main_queue(), block);
+    }
+}
 
 @interface YFPlaceholderContainer: UIView
 
@@ -68,31 +76,30 @@
     [self yf_showPlaceholderViewWithType:type title:nil tapHandle:tapHandle];
 }
 
+- (void)yf_showPlaceholderViewWithType:(YFPlaceholderType)type edgeInset:(UIEdgeInsets)edgeInset tapHandle:(void (^)(void))tapHandle {
+    return [self yf_showPlaceholderViewWithType:type title:nil edgeInset:edgeInset tapHandle:tapHandle];
+}
+
 - (void)yf_showPlaceholderViewWithType:(YFPlaceholderType)type title:(NSString *)title tapHandle:(void (^)(void))tapHandle {
-    YFPlaceholderView *placeHolderView = [YFPlaceholderView placeholderViewWithType:type title:title];
-    return [self yf_showCustomPlaceholderView:placeHolderView inRect:self.bounds tapHandle:tapHandle];
+    return [self yf_showPlaceholderViewWithType:type title:title edgeInset:UIEdgeInsetsZero tapHandle:tapHandle];
 }
 
-- (void)yf_showPlaceholderViewInRect:(CGRect)showRect type:(YFPlaceholderType)type tapHandle:(void(^)(void))tapHandle {
-    return [self yf_showPlaceholderViewInRect:showRect type:type title:nil tapHandle:tapHandle];
-}
-
-- (void)yf_showPlaceholderViewInRect:(CGRect)showRect type:(YFPlaceholderType)type title:(NSString *)title tapHandle:(void (^)(void))tapHandle {
+- (void)yf_showPlaceholderViewWithType:(YFPlaceholderType)type title:(NSString *)title edgeInset:(UIEdgeInsets)edgeInset tapHandle:(void (^)(void))tapHandle {
     YFPlaceholderView *placeHolderView = [YFPlaceholderView placeholderViewWithType:type title:title];
-    return [self yf_showCustomPlaceholderView:placeHolderView inRect:showRect tapHandle:tapHandle];
+    return [self yf_showCustomPlaceholderView:placeHolderView edgeInset:edgeInset tapHandle:tapHandle];
 }
 
 - (void)yf_showCustomPlaceholderView:(__kindof UIView *)customPlaceholder tapHandle:(void (^)(void))tapHandle {
-    return [self yf_showCustomPlaceholderView:customPlaceholder inRect:self.bounds tapHandle:tapHandle];
+    return [self yf_showCustomPlaceholderView:customPlaceholder edgeInset:UIEdgeInsetsZero tapHandle:tapHandle];
 }
 
-- (void)yf_showCustomPlaceholderView:(__kindof UIView *)customPlaceholder inRect:(CGRect)showRect tapHandle:(void (^)(void))tapHandle {
+- (void)yf_showCustomPlaceholderView:(__kindof UIView *)customPlaceholder edgeInset:(UIEdgeInsets)edgeInset tapHandle:(void (^)(void))tapHandle {
     
     if (customPlaceholder == nil) {
         return;
     }
     
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.00 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+    dispatch_main_async(^{
         // 如果是UIScrollView及其子类，占位图展示期间禁止scroll
         if ([self isKindOfClass:[UIScrollView class]]) {
             UIScrollView *scrollView = (UIScrollView *)self;
@@ -107,22 +114,39 @@
             [self.yf_placeholderContainer removeFromSuperview];
             self.yf_placeholderContainer = nil;
         }
-        YFPlaceholderContainer *placeholderContainer = [[YFPlaceholderContainer alloc] initWithFrame:showRect];
+        YFPlaceholderContainer *placeholderContainer = [[YFPlaceholderContainer alloc] initWithFrame:CGRectZero];
         [self addSubview:placeholderContainer];
+        [placeholderContainer addSubview:customPlaceholder];
+        
         self.yf_placeholderContainer = placeholderContainer;
         self.yf_placeholderContainer.yf_containerTapHandle = tapHandle;
         
+        // layout placeholderContainer
+        placeholderContainer.translatesAutoresizingMaskIntoConstraints = NO;
+        [self addConstraint:[NSLayoutConstraint constraintWithItem:placeholderContainer attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeTop multiplier:1 constant:edgeInset.top]];
+        
+        [self addConstraint:[NSLayoutConstraint constraintWithItem:placeholderContainer attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeLeft multiplier:1 constant:edgeInset.left]];
+        
+        [self addConstraint:[NSLayoutConstraint constraintWithItem:placeholderContainer attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeBottom multiplier:1 constant:edgeInset.bottom]];
+        
+        [self addConstraint:[NSLayoutConstraint constraintWithItem:placeholderContainer attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeRight multiplier:1 constant:edgeInset.right]];
+        
+        
+        // layout customPlaceholder
         customPlaceholder.translatesAutoresizingMaskIntoConstraints = NO;
-        [self.yf_placeholderContainer addSubview:customPlaceholder];
+        NSLayoutConstraint *centerXConstraint = [NSLayoutConstraint constraintWithItem:customPlaceholder attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:placeholderContainer attribute:NSLayoutAttributeCenterX multiplier:1 constant:0];
         
-        NSLayoutConstraint *centerXConstraint = [NSLayoutConstraint constraintWithItem:customPlaceholder attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self.yf_placeholderContainer attribute:NSLayoutAttributeCenterX multiplier:1 constant:0];
+        NSLayoutConstraint *centerYConstraint = [NSLayoutConstraint constraintWithItem:customPlaceholder attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:placeholderContainer attribute:NSLayoutAttributeCenterY multiplier:1 constant:0];
         
-        NSLayoutConstraint *centerYConstraint = [NSLayoutConstraint constraintWithItem:customPlaceholder attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self.yf_placeholderContainer attribute:NSLayoutAttributeCenterY multiplier:1 constant:0];
+        [placeholderContainer addConstraint:centerXConstraint];
+        [placeholderContainer addConstraint:centerYConstraint];
         
-        [self.yf_placeholderContainer addConstraint:centerXConstraint];
-        [self.yf_placeholderContainer addConstraint:centerYConstraint];
+        // 确保 占位图 布局正确
+        [self layoutIfNeeded];
+        [self.yf_placeholderContainer layoutIfNeeded];
     });
 }
+
 
 - (void)yf_removePlaceholderView {
     if (self.yf_placeholderContainer) {
