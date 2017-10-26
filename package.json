@@ -1,6 +1,6 @@
 {
   "name": "YFPlaceholderView",
-  "version": "1.0.0",
+  "version": "0.2.0",
   "description": "[![CI Status](http://img.shields.io/travis/bluesky0109/YFPlaceholderView.svg?style=flat)](https://travis-ci.org/bluesky0109/YFPlaceholderView) [![Version](https://img.shields.io/cocoapods/v/YFPlaceholderView.svg?style=flat)](http://cocoapods.org/pods/YFPlaceholderView) [![License](https://img.shields.io/cocoapods/l/YFPlaceholderView.svg?style=flat)](http://cocoapods.org/pods/YFPlaceholderView) [![Platform](https://img.shields.io/cocoapods/p/YFPlaceholderView.svg?style=flat)](http://cocoapods.org/pods/YFPlaceholderView)",
   "main": "index.js",
   "scripts": {
