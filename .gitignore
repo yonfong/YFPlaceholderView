@@ -31,3 +31,11 @@ Carthage
 # `pod install` in .travis.yml
 #
 # Pods/
+
+
+# node.js
+#
+node_modules/
+npm-debug.log
+yarn-error.log
+
