@@ -23,24 +23,15 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view, typically from a nib.
     
     __weak __typeof(self) weakSelf = self;
-    
-    [self.view yf_showPlaceholderViewWithType:YFPlaceholderTypeLoading tapHandle:^{
+    [self.view yf_showPlaceholderViewWithType:YFPlaceholderTypeLoading title:@"拼命加载中..." tapHandle:^{
         [weakSelf.view yf_showPlaceholderViewWithType:YFPlaceholderTypeSuccess tapHandle:^{
             [weakSelf.view yf_showPlaceholderViewWithType:YFPlaceholderTypeFail tapHandle:^{
                 [weakSelf.view yf_removePlaceholderView];
             }];
         }];
     }];
-    
-}
-
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
 
 @end

@@ -11,9 +11,8 @@
 
 @interface YFPlaceholderView()
 
-@property (nonatomic, strong) UIImageView *indicatorImageView;
 @property (nonatomic, strong) UILabel *titleLabel;
-
+@property (nonatomic, strong) UIImageView *indicatorImageView;
 @property (nonatomic, assign) YFPlaceholderType placeholderType;
 
 @end
@@ -26,7 +25,7 @@
 
 - (instancetype)initWithPlaceHolderType:(YFPlaceholderType)placeholderType title:(NSString *)title {
     if (self = [super initWithFrame:CGRectZero]) {
-        [self setup];
+        [self setupViews];
         self.placeholderType = placeholderType;
         self.titleLabel.text = title;
     }
@@ -37,26 +36,22 @@
     return  [[self alloc] initWithPlaceHolderType:placeholderType title:title];
 }
 
-- (void)setup {
+- (void)setupViews {
     self.backgroundColor = [UIColor whiteColor];
     [self addSubview:self.indicatorImageView];
     [self addSubview:self.titleLabel];
     
-    NSDictionary *views = NSDictionaryOfVariableBindings(_indicatorImageView);
-    [self addConstraints:[NSLayoutConstraint
-                          constraintsWithVisualFormat:@"|->=10-[_indicatorImageView]-|"
-                          options:NSLayoutFormatAlignAllCenterX
-                          metrics:nil views:views]];
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.indicatorImageView attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterX multiplier:1 constant:0]];
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.indicatorImageView attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:self attribute:NSLayoutAttributeLeading multiplier:1 constant:8]];
+
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.titleLabel attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterX multiplier:1 constant:0]];
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.titleLabel attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:self attribute:NSLayoutAttributeLeading multiplier:1 constant:8]];
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.titleLabel attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationLessThanOrEqual toItem:nil attribute:NSLayoutAttributeWidth multiplier:1 constant:200]];
     
-    views = NSDictionaryOfVariableBindings(_titleLabel);
-    [self addConstraints:[NSLayoutConstraint
-                          constraintsWithVisualFormat:@"H:|-10-[_titleLabel]-|"
-                          options:NSLayoutFormatAlignAllCenterX
-                          metrics:nil views:views]];
-    [_titleLabel setContentCompressionResistancePriority:UILayoutPriorityDefaultHigh forAxis:UILayoutConstraintAxisHorizontal];
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.indicatorImageView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeTop multiplier:1 constant:0]];
     
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-10-[_indicatorImageView]-10-[_titleLabel]-10-|" options:0 metrics:nil views:NSDictionaryOfVariableBindings(_indicatorImageView,_titleLabel)]];
-    
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.titleLabel attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.indicatorImageView attribute:NSLayoutAttributeBottom multiplier:1 constant:8]];
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.titleLabel attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeBottom multiplier:1 constant:0]];
 }
 
 - (void)didMoveToSuperview {
@@ -86,7 +81,7 @@
     if (!_titleLabel) {
         _titleLabel = [[UILabel alloc] initWithFrame:CGRectZero];
         _titleLabel.numberOfLines = 0;
-        _titleLabel.font = [UIFont systemFontOfSize:12];
+        _titleLabel.font = [UIFont systemFontOfSize:14];
         _titleLabel.textColor = [UIColor lightGrayColor];
         _titleLabel.textAlignment = NSTextAlignmentCenter;
         _titleLabel.translatesAutoresizingMaskIntoConstraints = NO;
