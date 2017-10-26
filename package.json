@@ -4,7 +4,9 @@
   "description": "[![CI Status](http://img.shields.io/travis/bluesky0109/YFPlaceholderView.svg?style=flat)](https://travis-ci.org/bluesky0109/YFPlaceholderView) [![Version](https://img.shields.io/cocoapods/v/YFPlaceholderView.svg?style=flat)](http://cocoapods.org/pods/YFPlaceholderView) [![License](https://img.shields.io/cocoapods/l/YFPlaceholderView.svg?style=flat)](http://cocoapods.org/pods/YFPlaceholderView) [![Platform](https://img.shields.io/cocoapods/p/YFPlaceholderView.svg?style=flat)](http://cocoapods.org/pods/YFPlaceholderView)",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "commit": "git-cz",
+    "commitmsg": "validate-commit-msg",
+    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0"
   },
   "repository": {
     "type": "git",
@@ -18,7 +20,10 @@
   },
   "homepage": "https://github.com/bluesky0109/YFPlaceholderView#readme",
   "devDependencies": {
-    "cz-conventional-changelog": "^2.0.0"
+    "commitizen": "^2.9.6",
+    "validate-commit-msg": "^2.14.0",
+    "cz-conventional-changelog": "^2.0.0",
+    "husky": "^0.14.3"
   },
   "config": {
     "commitizen": {
