@@ -1,0 +1,28 @@
+{
+  "name": "YFPlaceholderView",
+  "version": "1.0.0",
+  "description": "[![CI Status](http://img.shields.io/travis/bluesky0109/YFPlaceholderView.svg?style=flat)](https://travis-ci.org/bluesky0109/YFPlaceholderView) [![Version](https://img.shields.io/cocoapods/v/YFPlaceholderView.svg?style=flat)](http://cocoapods.org/pods/YFPlaceholderView) [![License](https://img.shields.io/cocoapods/l/YFPlaceholderView.svg?style=flat)](http://cocoapods.org/pods/YFPlaceholderView) [![Platform](https://img.shields.io/cocoapods/p/YFPlaceholderView.svg?style=flat)](http://cocoapods.org/pods/YFPlaceholderView)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bluesky0109/YFPlaceholderView.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bluesky0109/YFPlaceholderView/issues"
+  },
+  "homepage": "https://github.com/bluesky0109/YFPlaceholderView#readme",
+  "devDependencies": {
+    "cz-conventional-changelog": "^2.0.0"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  }
+}
