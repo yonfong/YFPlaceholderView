@@ -11,7 +11,7 @@ PODS:
     - FBSnapshotTestCase/Core
   - Masonry (1.1.0)
   - Specta (1.0.7)
-  - YFPlaceholderView (0.3.0)
+  - YFPlaceholderView (0.4.0)
 
 DEPENDENCIES:
   - Expecta
@@ -31,7 +31,7 @@ SPEC CHECKSUMS:
   FBSnapshotTestCase: 094f9f314decbabe373b87cc339bea235a63e07a
   Masonry: 678fab65091a9290e40e2832a55e7ab731aad201
   Specta: 3e1bd89c3517421982dc4d1c992503e48bd5fe66
-  YFPlaceholderView: bd695a66202a3d5ca34b3d9f30c2be9791a52c92
+  YFPlaceholderView: 6fa684c305d769212cb43be1d0d71475c7fd2c10
 
 PODFILE CHECKSUM: dd0152dc8f574a3fbf0d35f418f7ec8ccd0b683b
 
