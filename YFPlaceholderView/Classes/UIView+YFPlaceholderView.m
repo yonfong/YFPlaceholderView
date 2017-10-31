@@ -21,9 +21,19 @@ NS_INLINE void dispatch_main_async(dispatch_block_t block) {
 
 @interface YFPlaceholderContainer: UIView
 
+@property (nonatomic, strong) UIView *contentView;
+
+@property (nonatomic, strong) UIView *placeHolderView;
+
 @property (nonatomic, strong) UITapGestureRecognizer *tapGesture;
 
+@property (nonatomic, assign) UIEdgeInsets contentEdgeInsets;
+
 @property (nonatomic, copy) void(^yf_containerTapHandle)(void);
+
+- (void)setupConstraints;
+
+- (void)prepareForReuse;
 
 @end
 
@@ -32,8 +42,56 @@ NS_INLINE void dispatch_main_async(dispatch_block_t block) {
 - (instancetype)initWithFrame:(CGRect)frame {
     if (self = [super initWithFrame:frame]) {
         self.backgroundColor = [UIColor whiteColor];
+        [self addSubview:self.contentView];
+        _contentEdgeInsets = UIEdgeInsetsZero;
     }
     return self;
+}
+
+- (void)didMoveToSuperview {
+    CGRect superviewBounds = self.superview.bounds;
+    self.frame = CGRectMake(0.0, 0.0, CGRectGetWidth(superviewBounds), CGRectGetHeight(superviewBounds));
+    self.contentView.alpha = 1.0;
+}
+
+- (void)prepareForReuse {
+    [self.contentView.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
+    
+    [self removeAllConstraints];
+}
+
+- (void)setupConstraints {
+
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.contentView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeTop multiplier:1 constant:_contentEdgeInsets.top]];
+    
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.contentView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeLeft multiplier:1 constant:_contentEdgeInsets.left]];
+    
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.contentView attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeBottom multiplier:1 constant:_contentEdgeInsets.bottom]];
+    
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.contentView attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeRight multiplier:1 constant:_contentEdgeInsets.right]];
+    
+    if (_placeHolderView) {
+        [_contentView addConstraint:[NSLayoutConstraint constraintWithItem:_placeHolderView attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:_contentView attribute:NSLayoutAttributeCenterX multiplier:1.0 constant:0]];
+        
+        [_contentView addConstraint:[NSLayoutConstraint constraintWithItem:_placeHolderView attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:_contentView attribute:NSLayoutAttributeCenterY multiplier:1.0 constant:0]];
+    }
+}
+
+- (void)removeAllConstraints {
+    [self removeConstraints:self.constraints];
+    [_contentView removeConstraints:_contentView.constraints];
+}
+
+#pragma mark - getters && setters
+- (UIView *)contentView {
+    if (!_contentView) {
+        _contentView = [[UIView alloc] initWithFrame:CGRectZero];
+        _contentView.translatesAutoresizingMaskIntoConstraints = NO;
+        _contentView.backgroundColor = [UIColor clearColor];
+        _contentView.userInteractionEnabled = YES;
+        _contentView.alpha = 0;
+    }
+    return _contentView;
 }
 
 - (void)setYf_containerTapHandle:(void (^)(void))yf_containerTapHandle
@@ -58,6 +116,21 @@ NS_INLINE void dispatch_main_async(dispatch_block_t block) {
         [self addGestureRecognizer:_tapGesture];
     }
     return _tapGesture;
+}
+
+- (void)setPlaceHolderView:(UIView *)placeHolderView {
+    if (!placeHolderView) {
+        return;
+    }
+
+    if (_placeHolderView) {
+        [_placeHolderView removeFromSuperview];
+        _placeHolderView = nil;
+    }
+
+    _placeHolderView = placeHolderView;
+    _placeHolderView.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.contentView addSubview:_placeHolderView];
 }
 
 @end
@@ -100,11 +173,14 @@ NS_INLINE void dispatch_main_async(dispatch_block_t block) {
     }
     
     dispatch_main_async(^{
+        // fix placeholderContainer position not correct
+        [self layoutIfNeeded];
+        
         // 如果是UIScrollView及其子类，占位图展示期间禁止scroll
         if ([self isKindOfClass:[UIScrollView class]]) {
             UIScrollView *scrollView = (UIScrollView *)self;
             
-            if (self.yf_placeholderContainer) {
+            if (self.yf_placeholderContainer.superview) {
                 scrollView.scrollEnabled = self.yf_originalScrollEnabled;
             }
             
@@ -115,40 +191,26 @@ NS_INLINE void dispatch_main_async(dispatch_block_t block) {
         }
         
         //------- 占位图 容器 -------//
-        if (self.yf_placeholderContainer) {
-            [self.yf_placeholderContainer removeFromSuperview];
-            self.yf_placeholderContainer = nil;
+        YFPlaceholderContainer *containerView = self.yf_placeholderContainer;
+        if (!containerView) {
+            containerView = [[YFPlaceholderContainer alloc] initWithFrame:CGRectZero];
         }
-        YFPlaceholderContainer *placeholderContainer = [[YFPlaceholderContainer alloc] initWithFrame:CGRectZero];
-        [self addSubview:placeholderContainer];
-        [placeholderContainer addSubview:customPlaceholder];
         
-        self.yf_placeholderContainer = placeholderContainer;
+        if (!containerView.superview) {
+            [self addSubview:containerView];
+            self.yf_placeholderContainer = containerView;
+        }
+        
+        [containerView prepareForReuse];
+        containerView.contentEdgeInsets = edgeInset;
+        containerView.placeHolderView = customPlaceholder;
+        [containerView setupConstraints];
+        
         self.yf_placeholderContainer.yf_containerTapHandle = tapHandle;
-        
-        // layout placeholderContainer
-        placeholderContainer.translatesAutoresizingMaskIntoConstraints = NO;
-        [self addConstraint:[NSLayoutConstraint constraintWithItem:placeholderContainer attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeTop multiplier:1 constant:edgeInset.top]];
-        
-        [self addConstraint:[NSLayoutConstraint constraintWithItem:placeholderContainer attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeLeft multiplier:1 constant:edgeInset.left]];
-        
-        [self addConstraint:[NSLayoutConstraint constraintWithItem:placeholderContainer attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeBottom multiplier:1 constant:edgeInset.bottom]];
-        
-        [self addConstraint:[NSLayoutConstraint constraintWithItem:placeholderContainer attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeRight multiplier:1 constant:edgeInset.right]];
-        
-        
-        // layout customPlaceholder
-        customPlaceholder.translatesAutoresizingMaskIntoConstraints = NO;
-        NSLayoutConstraint *centerXConstraint = [NSLayoutConstraint constraintWithItem:customPlaceholder attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:placeholderContainer attribute:NSLayoutAttributeCenterX multiplier:1 constant:0];
-        
-        NSLayoutConstraint *centerYConstraint = [NSLayoutConstraint constraintWithItem:customPlaceholder attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:placeholderContainer attribute:NSLayoutAttributeCenterY multiplier:1 constant:0];
-        
-        [placeholderContainer addConstraint:centerXConstraint];
-        [placeholderContainer addConstraint:centerYConstraint];
-        
-        // 确保 占位图 布局正确
-        [self layoutIfNeeded];
-        [self.yf_placeholderContainer layoutIfNeeded];
+
+        [UIView performWithoutAnimation:^{
+            [containerView layoutIfNeeded];
+        }];
     });
 }
 
