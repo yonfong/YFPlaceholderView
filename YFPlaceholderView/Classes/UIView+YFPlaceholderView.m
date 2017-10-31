@@ -103,6 +103,11 @@ NS_INLINE void dispatch_main_async(dispatch_block_t block) {
         // 如果是UIScrollView及其子类，占位图展示期间禁止scroll
         if ([self isKindOfClass:[UIScrollView class]]) {
             UIScrollView *scrollView = (UIScrollView *)self;
+            
+            if (self.yf_placeholderContainer) {
+                scrollView.scrollEnabled = self.yf_originalScrollEnabled;
+            }
+            
             // 先记录原本的scrollEnabled
             self.yf_originalScrollEnabled = scrollView.scrollEnabled;
             // 再将scrollEnabled设为NO
