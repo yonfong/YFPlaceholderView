@@ -10,7 +10,7 @@
 
 typedef NS_ENUM(NSInteger, YFPlaceholderType) {
     YFPlaceholderTypeLoading = 0,
-    YFPlaceholderTypeFail ,
+    YFPlaceholderTypeFail,
     YFPlaceholderTypeSuccess,
 };
 

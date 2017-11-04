@@ -8,7 +8,7 @@
 
 #import "NSBundle+YFPlaceholder.h"
 
-static NSString * const kPodName = @"YFPlaceholderView";
+static NSString *const kPodName = @"YFPlaceholderView";
 
 @implementation NSBundle (YFPlaceHolder)
 

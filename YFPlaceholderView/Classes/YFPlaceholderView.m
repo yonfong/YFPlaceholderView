@@ -6,10 +6,10 @@
 //  Copyright (c) 2017 bluesky0109. All rights reserved.
 //
 
-#import "YFPlaceholderView.h"
 #import "UIImage+YFPlaceholder.h"
+#import "YFPlaceholderView.h"
 
-@interface YFPlaceholderView()
+@interface YFPlaceholderView ()
 
 @property (nonatomic, strong) UILabel *titleLabel;
 @property (nonatomic, strong) UIImageView *indicatorImageView;
@@ -33,25 +33,73 @@
 }
 
 + (instancetype)placeholderViewWithType:(YFPlaceholderType)placeholderType title:(NSString *)title {
-    return  [[self alloc] initWithPlaceHolderType:placeholderType title:title];
+    return [[self alloc] initWithPlaceHolderType:placeholderType title:title];
 }
 
 - (void)setupViews {
     self.backgroundColor = [UIColor whiteColor];
     [self addSubview:self.indicatorImageView];
     [self addSubview:self.titleLabel];
-    
-    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.indicatorImageView attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterX multiplier:1 constant:0]];
-    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.indicatorImageView attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:self attribute:NSLayoutAttributeLeading multiplier:1 constant:8]];
 
-    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.titleLabel attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterX multiplier:1 constant:0]];
-    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.titleLabel attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:self attribute:NSLayoutAttributeLeading multiplier:1 constant:8]];
-    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.titleLabel attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationLessThanOrEqual toItem:nil attribute:NSLayoutAttributeWidth multiplier:1 constant:200]];
-    
-    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.indicatorImageView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeTop multiplier:1 constant:0]];
-    
-    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.titleLabel attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.indicatorImageView attribute:NSLayoutAttributeBottom multiplier:1 constant:8]];
-    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.titleLabel attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeBottom multiplier:1 constant:0]];
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.indicatorImageView
+                                                     attribute:NSLayoutAttributeCenterX
+                                                     relatedBy:NSLayoutRelationEqual
+                                                        toItem:self
+                                                     attribute:NSLayoutAttributeCenterX
+                                                    multiplier:1
+                                                      constant:0]];
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.indicatorImageView
+                                                     attribute:NSLayoutAttributeLeading
+                                                     relatedBy:NSLayoutRelationGreaterThanOrEqual
+                                                        toItem:self
+                                                     attribute:NSLayoutAttributeLeading
+                                                    multiplier:1
+                                                      constant:8]];
+
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.titleLabel
+                                                     attribute:NSLayoutAttributeCenterX
+                                                     relatedBy:NSLayoutRelationEqual
+                                                        toItem:self
+                                                     attribute:NSLayoutAttributeCenterX
+                                                    multiplier:1
+                                                      constant:0]];
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.titleLabel
+                                                     attribute:NSLayoutAttributeLeading
+                                                     relatedBy:NSLayoutRelationGreaterThanOrEqual
+                                                        toItem:self
+                                                     attribute:NSLayoutAttributeLeading
+                                                    multiplier:1
+                                                      constant:8]];
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.titleLabel
+                                                     attribute:NSLayoutAttributeWidth
+                                                     relatedBy:NSLayoutRelationLessThanOrEqual
+                                                        toItem:nil
+                                                     attribute:NSLayoutAttributeWidth
+                                                    multiplier:1
+                                                      constant:200]];
+
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.indicatorImageView
+                                                     attribute:NSLayoutAttributeTop
+                                                     relatedBy:NSLayoutRelationEqual
+                                                        toItem:self
+                                                     attribute:NSLayoutAttributeTop
+                                                    multiplier:1
+                                                      constant:0]];
+
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.titleLabel
+                                                     attribute:NSLayoutAttributeTop
+                                                     relatedBy:NSLayoutRelationEqual
+                                                        toItem:self.indicatorImageView
+                                                     attribute:NSLayoutAttributeBottom
+                                                    multiplier:1
+                                                      constant:8]];
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.titleLabel
+                                                     attribute:NSLayoutAttributeBottom
+                                                     relatedBy:NSLayoutRelationEqual
+                                                        toItem:self
+                                                     attribute:NSLayoutAttributeBottom
+                                                    multiplier:1
+                                                      constant:0]];
 }
 
 - (void)didMoveToSuperview {
@@ -104,7 +152,7 @@
 - (NSArray<UIImage *> *)indicatorAnimationImages {
     NSMutableArray *images = [NSMutableArray arrayWithCapacity:6];
     for (int index = 1; index <= 6; index++) {
-        NSString *imageName = [NSString stringWithFormat:@"yf_Indicator_Loading_%d",index];
+        NSString *imageName = [NSString stringWithFormat:@"yf_Indicator_Loading_%d", index];
         UIImage *image = [UIImage yf_bundleImageNamed:imageName];
         if (image) {
             [images addObject:image];
@@ -114,4 +162,3 @@
 }
 
 @end
-

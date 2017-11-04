@@ -10,14 +10,12 @@
 
 @interface NSBundle (YFPlaceholder)
 
-
 /**
  获取 YFPlaceholderView Pod中的 资源文件
 
  @return YFPlaceholderView Pod中的 资源文件
  */
 + (NSBundle *)yf_placeholderBundle;
-
 
 /**
  获取 YFPlaceholderView Pod中的 资源文件 URL路径

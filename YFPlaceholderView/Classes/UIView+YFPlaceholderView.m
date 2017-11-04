@@ -19,7 +19,7 @@ NS_INLINE void dispatch_main_async(dispatch_block_t block) {
     }
 }
 
-@interface YFPlaceholderContainer: UIView
+@interface YFPlaceholderContainer : UIView
 
 @property (nonatomic, strong) UIView *contentView;
 
@@ -29,7 +29,7 @@ NS_INLINE void dispatch_main_async(dispatch_block_t block) {
 
 @property (nonatomic, assign) UIEdgeInsets contentEdgeInsets;
 
-@property (nonatomic, copy) void(^yf_containerTapHandle)(void);
+@property (nonatomic, copy) void (^yf_containerTapHandle)(void);
 
 - (void)setupConstraints;
 
@@ -56,24 +56,59 @@ NS_INLINE void dispatch_main_async(dispatch_block_t block) {
 
 - (void)prepareForReuse {
     [self.contentView.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
-    
+
     [self removeAllConstraints];
 }
 
 - (void)setupConstraints {
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.contentView
+                                                     attribute:NSLayoutAttributeTop
+                                                     relatedBy:NSLayoutRelationEqual
+                                                        toItem:self
+                                                     attribute:NSLayoutAttributeTop
+                                                    multiplier:1
+                                                      constant:_contentEdgeInsets.top]];
 
-    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.contentView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeTop multiplier:1 constant:_contentEdgeInsets.top]];
-    
-    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.contentView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeLeft multiplier:1 constant:_contentEdgeInsets.left]];
-    
-    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.contentView attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeBottom multiplier:1 constant:_contentEdgeInsets.bottom]];
-    
-    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.contentView attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeRight multiplier:1 constant:_contentEdgeInsets.right]];
-    
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.contentView
+                                                     attribute:NSLayoutAttributeLeft
+                                                     relatedBy:NSLayoutRelationEqual
+                                                        toItem:self
+                                                     attribute:NSLayoutAttributeLeft
+                                                    multiplier:1
+                                                      constant:_contentEdgeInsets.left]];
+
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.contentView
+                                                     attribute:NSLayoutAttributeBottom
+                                                     relatedBy:NSLayoutRelationEqual
+                                                        toItem:self
+                                                     attribute:NSLayoutAttributeBottom
+                                                    multiplier:1
+                                                      constant:_contentEdgeInsets.bottom]];
+
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.contentView
+                                                     attribute:NSLayoutAttributeRight
+                                                     relatedBy:NSLayoutRelationEqual
+                                                        toItem:self
+                                                     attribute:NSLayoutAttributeRight
+                                                    multiplier:1
+                                                      constant:_contentEdgeInsets.right]];
+
     if (_placeHolderView) {
-        [_contentView addConstraint:[NSLayoutConstraint constraintWithItem:_placeHolderView attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:_contentView attribute:NSLayoutAttributeCenterX multiplier:1.0 constant:0]];
-        
-        [_contentView addConstraint:[NSLayoutConstraint constraintWithItem:_placeHolderView attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:_contentView attribute:NSLayoutAttributeCenterY multiplier:1.0 constant:0]];
+        [_contentView addConstraint:[NSLayoutConstraint constraintWithItem:_placeHolderView
+                                                                 attribute:NSLayoutAttributeCenterX
+                                                                 relatedBy:NSLayoutRelationEqual
+                                                                    toItem:_contentView
+                                                                 attribute:NSLayoutAttributeCenterX
+                                                                multiplier:1.0
+                                                                  constant:0]];
+
+        [_contentView addConstraint:[NSLayoutConstraint constraintWithItem:_placeHolderView
+                                                                 attribute:NSLayoutAttributeCenterY
+                                                                 relatedBy:NSLayoutRelationEqual
+                                                                    toItem:_contentView
+                                                                 attribute:NSLayoutAttributeCenterY
+                                                                multiplier:1.0
+                                                                  constant:0]];
     }
 }
 
@@ -94,8 +129,7 @@ NS_INLINE void dispatch_main_async(dispatch_block_t block) {
     return _contentView;
 }
 
-- (void)setYf_containerTapHandle:(void (^)(void))yf_containerTapHandle
-{
+- (void)setYf_containerTapHandle:(void (^)(void))yf_containerTapHandle {
     _yf_containerTapHandle = yf_containerTapHandle;
     if (yf_containerTapHandle) {
         self.tapGesture.enabled = YES;
@@ -135,8 +169,7 @@ NS_INLINE void dispatch_main_async(dispatch_block_t block) {
 
 @end
 
-
-@interface UIView()
+@interface UIView ()
 
 @property (nonatomic, weak) YFPlaceholderContainer *yf_placeholderContainer;
 @property (nonatomic, assign) BOOL yf_originalScrollEnabled;
@@ -145,7 +178,7 @@ NS_INLINE void dispatch_main_async(dispatch_block_t block) {
 
 @implementation UIView (YFPlaceholderView)
 
-- (void)yf_showPlaceholderViewWithType:(YFPlaceholderType)type tapHandle:(void(^)(void))tapHandle {
+- (void)yf_showPlaceholderViewWithType:(YFPlaceholderType)type tapHandle:(void (^)(void))tapHandle {
     [self yf_showPlaceholderViewWithType:type title:nil tapHandle:tapHandle];
 }
 
@@ -167,45 +200,44 @@ NS_INLINE void dispatch_main_async(dispatch_block_t block) {
 }
 
 - (void)yf_showCustomPlaceholderView:(__kindof UIView *)customPlaceholder edgeInset:(UIEdgeInsets)edgeInset tapHandle:(void (^)(void))tapHandle {
-    
     if (customPlaceholder == nil) {
         return;
     }
-    
+
     dispatch_main_async(^{
         // fix placeholderContainer position not correct
         [self layoutIfNeeded];
-        
+
         // 如果是UIScrollView及其子类，占位图展示期间禁止scroll
         if ([self isKindOfClass:[UIScrollView class]]) {
             UIScrollView *scrollView = (UIScrollView *)self;
-            
+
             if (self.yf_placeholderContainer.superview) {
                 scrollView.scrollEnabled = self.yf_originalScrollEnabled;
             }
-            
+
             // 先记录原本的scrollEnabled
             self.yf_originalScrollEnabled = scrollView.scrollEnabled;
             // 再将scrollEnabled设为NO
             scrollView.scrollEnabled = NO;
         }
-        
+
         //------- 占位图 容器 -------//
         YFPlaceholderContainer *containerView = self.yf_placeholderContainer;
         if (!containerView) {
             containerView = [[YFPlaceholderContainer alloc] initWithFrame:CGRectZero];
         }
-        
+
         if (!containerView.superview) {
             [self addSubview:containerView];
             self.yf_placeholderContainer = containerView;
         }
-        
+
         [containerView prepareForReuse];
         containerView.contentEdgeInsets = edgeInset;
         containerView.placeHolderView = customPlaceholder;
         [containerView setupConstraints];
-        
+
         self.yf_placeholderContainer.yf_containerTapHandle = tapHandle;
 
         [UIView performWithoutAnimation:^{
@@ -213,7 +245,6 @@ NS_INLINE void dispatch_main_async(dispatch_block_t block) {
         }];
     });
 }
-
 
 - (void)yf_removePlaceholderView {
     if (self.yf_placeholderContainer) {
@@ -244,4 +275,3 @@ NS_INLINE void dispatch_main_async(dispatch_block_t block) {
 }
 
 @end
-

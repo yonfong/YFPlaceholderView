@@ -6,8 +6,8 @@
 //  Copyright (c) 2017 bluesky0109. All rights reserved.
 //
 
-#import "UIImage+YFPlaceholder.h"
 #import "NSBundle+YFPlaceholder.h"
+#import "UIImage+YFPlaceholder.h"
 
 @implementation UIImage (YFPlaceholder)
 
