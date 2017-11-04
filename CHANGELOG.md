@@ -1,3 +1,13 @@
+<a name="0.5.0"></a>
+# [0.5.0](https://github.com/bluesky0109/YFPlaceholderView/compare/0.4.0...0.5.0) (2017-11-04)
+
+
+
+<a name="0.2.0"></a>
+# [0.2.0](https://github.com/bluesky0109/YFPlaceholderView/compare/0.4.0...0.2.0) (2017-11-04)
+
+
+
 <a name="1.0.0"></a>
 # [1.0.0](https://github.com/bluesky0109/YFPlaceholderView/compare/0.2.0...1.0.0) (2017-10-26)
 
