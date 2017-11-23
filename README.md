@@ -22,7 +22,7 @@ pod 'YFPlaceholderView'
 
 ## Author
 
-bluesky0109, huifeng0109@gmail.com
+Yonfong, yonfeng.zhang@gmail.com
 
 ## License
 
